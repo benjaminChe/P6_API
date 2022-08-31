@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const Thing = require('./models/thing');
 const app = express();
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -8,12 +8,25 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   const collection = client.db("test").collection("devices");
   // perform actions on the collection object
-  client.close();
-  
+  client.close()
+  .then(() => console.log('Connexion à MongoDB réussie !'))
+  .catch(() => console.log('Connexion à MongoDB échouée !'));
+
 })
-.then(() => console.log('Connexion à MongoDB réussie !'))
-.catch(() => console.log('Connexion à MongoDB échouée !'));
 
+app.post('/api/stuff', (req, res, next) => {
+   delete req.body._id;
+   const thing = new Thing({
+     ...req.body
+   });
+   thing.save()
+     .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
+     .catch(error => res.status(400).json({ error }));
+ });
+ app.use('/api/stuff', (req, res, next) => {
+   Thing.find()
+     .then(things => res.status(200).json(things))
+     .catch(error => res.status(400).json({ error }));
+ });
 
-
-module.exports = app;
+module.exports = app; 
