@@ -13,7 +13,9 @@ client.connect(err => {
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 })
-
+app.use((req, res) => {
+  res.json({ message: 'Votre requête !' }); 
+});
 app.post('/api/stuff', (req, res, next) => {
    delete req.body._id;
    const thing = new Thing({
