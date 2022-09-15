@@ -1,11 +1,11 @@
-const sauce = require('../models/modelsSauces');
+const Sauces = require('../models/modelsSauces');
 const fs = require('fs');
 
 exports.createsauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
   delete sauceObject._userId;
-  const sauce = new sauce({
+  const sauce = new Sauces({
       ...sauceObject,
       userId: req.auth.userId,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -17,7 +17,8 @@ exports.createsauce = (req, res, next) => {
 };
 
 exports.getOnesauce = (req, res, next) => {
-  sauce.findOne({
+  console.log("Je passe par getOneSauce")
+  Sauces.findOne({
     _id: req.params.id
   }).then(
     (sauce) => {
@@ -39,12 +40,12 @@ exports.modifysauce = (req, res, next) => {
   } : { ...req.body };
 
   delete sauceObject._userId;
-  sauce.findOne({_id: req.params.id})
+  Sauces.findOne({_id: req.params.id})
       .then((sauce) => {
           if (sauce.userId != req.auth.userId) {
               res.status(401).json({ message : 'Not authorized'});
           } else {
-              sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
+              Sauces.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
               .then(() => res.status(200).json({message : 'Objet modifié!'}))
               .catch(error => res.status(401).json({ error }));
           }
@@ -55,7 +56,7 @@ exports.modifysauce = (req, res, next) => {
 };
 
 exports.deletesauce = (req, res, next) => {
-  sauce.findOne({ _id: req.params.id})
+  Sauces.findOne({ _id: req.params.id})
       .then(sauce => {
           if (sauce.userId != req.auth.userId) {
               res.status(401).json({message: 'Not authorized'});
@@ -73,8 +74,8 @@ exports.deletesauce = (req, res, next) => {
       });
 };
 exports.getAllsauce = (req, res, next) => {
-  console.log("test");
-  sauce.find().then(
+  console.log("Je passe par getAllSauce");
+  Sauces.find().then(
     function(sauces) {
       res.status(200).json(sauces);
     }
