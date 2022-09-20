@@ -17,7 +17,7 @@ exports.createsauce = (req, res, next) => {
 };
 
 exports.getOnesauce = (req, res, next) => {
-  console.log("Je passe par getOneSauce")
+ 
   Sauces.findOne({
     _id: req.params.id
   }).then(
@@ -74,7 +74,7 @@ exports.deletesauce = (req, res, next) => {
       });
 };
 exports.getAllsauce = (req, res, next) => {
-  console.log("Je passe par getAllSauce");
+  
   Sauces.find().then(
     function(sauces) {
       res.status(200).json(sauces);
@@ -82,6 +82,24 @@ exports.getAllsauce = (req, res, next) => {
   ).catch(
     function(error) {
       console.log("COucou")
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
+};
+// like dislike
+exports.likes = (req, res, next) => {
+  console.log("Je passe par -like-");
+  Sauces.updateOne({ },{})
+  .then(
+    function(sauce) {
+      
+      res.status(200).json(sauce);
+    }
+  ).catch(
+    function(error) {
+      console.log("probleme catché")
       res.status(400).json({
         error: error
       });
