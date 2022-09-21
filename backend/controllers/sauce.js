@@ -88,10 +88,10 @@ exports.getAllsauce = (req, res, next) => {
     }
   );
 };
-// like dislike
+// like dislike 
 exports.likes = (req, res, next) => {
-  console.log("Je passe par -like-");
-  Sauces.updateOne({ },{})
+  console.log("Je passe par -likes-");
+  Sauces.updateOne({ _id: req.params.id}, { Sauces.likes,  $inc: { quantity: +1 } })
   .then(
     function(sauce) {
       
