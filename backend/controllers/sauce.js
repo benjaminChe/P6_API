@@ -91,7 +91,10 @@ exports.getAllsauce = (req, res, next) => {
 // like dislike 
 exports.likes = (req, res, next) => {
   console.log("Je passe par -likes-");
-  Sauces.updateOne({ _id: req.params.id}, { Sauces.likes,  $inc: { quantity: +1 } })
+  console.log(req.body);
+  console.log(req.params);
+  /*
+  Sauces.updateOne({ _id: req.params.id}, { likes,  $inc: { quantity: +1 } })
   .then(
     function(sauce) {
       
@@ -105,4 +108,5 @@ exports.likes = (req, res, next) => {
       });
     }
   );
+  */
 };
