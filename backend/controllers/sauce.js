@@ -45,9 +45,15 @@ exports.modifysauce = (req, res, next) => {
           if (sauce.userId != req.auth.userId) {
               res.status(401).json({ message : 'Not authorized'});
           } else {
+            //const filename = sauce.imageUrl.split('/images/')[1];
               Sauces.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
               .then(() => res.status(200).json({message : 'Objet modifié!'}))
               .catch(error => res.status(401).json({ error }));
+             /*fs.unlink(`images/${filename}`, () => {
+                sauce.deleteOne({_id: req.params.id})
+                    .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
+                    .catch(error => res.status(401).json({ error }));
+            });*/
           }
       })
       .catch((error) => {
@@ -93,20 +99,23 @@ exports.likes = (req, res, next) => {
   console.log("Je passe par -likes-");
   console.log(req.body);
   console.log(req.params);
-  /*
-  Sauces.updateOne({ _id: req.params.id}, { likes,  $inc: { quantity: +1 } })
-  .then(
-    function(sauce) {
+
+  /*Sauces.findOne({ _id: req.params.id})
+      .then(sauce => {
+  
+  switch (sauce.usersLiked) {
+case '':
+      +1
+
+break;
+case 'userId':
+      -1
+
+break;
+case '':
       
-      res.status(200).json(sauce);
-    }
-  ).catch(
-    function(error) {
-      console.log("probleme catché")
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
-  */
+break;
+    
+   });*/
+
 };
