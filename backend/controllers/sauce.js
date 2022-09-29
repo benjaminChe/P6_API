@@ -34,27 +34,22 @@ exports.getOnesauce = (req, res, next) => {
 };
 
 exports.modifysauce = (req, res, next) => {
-  const sauceObject = req.file ? {
-      ...JSON.parse(req.body.sauce),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  } : { ...req.body };
-
-  delete sauceObject._userId;
+ 
   Sauces.findOne({_id: req.params.id})
       .then((sauce) => {
           if (sauce.userId != req.auth.userId) {
               res.status(401).json({ message : 'Not authorized'});
           } else {
-
-            //const filename = sauce.imageUrl.split('/images/')[1];
+            const sauceObject = req.file ? {
+              ...JSON.parse(req.body.sauce),
+              imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+          } : { ...req.body };
+            delete sauceObject._userId;
+            const filename = sauce.imageUrl.split('/images/')[1];
               Sauces.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
               .then(() => res.status(200).json({message : 'Objet modifié!'}))
               .catch(error => res.status(401).json({ error }));
-             /*fs.unlink(`images/${filename}`, () => {
-                sauce.deleteOne({_id: req.params.id})
-                    .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
-                    .catch(error => res.status(401).json({ error }));
-            });*/
+             fs.unlink(`images/${filename}`, () => {} );
           }
       })
       .catch((error) => {
