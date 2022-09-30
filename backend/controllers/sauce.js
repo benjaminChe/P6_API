@@ -83,34 +83,32 @@ exports.getAllsauce = (req, res, next) => {
     }
   ).catch(
     function(error) {
-      console.log("COucou")
+      
       res.status(400).json({
         error: error
       });
     }
   );
 };
-// like dislike 
-exports.likes = (req, res, next) => {
+ 
+exports.like = (req, res, next) => {
   console.log("Je passe par -likes-");
-  console.log(req.body);
-  console.log(req.params);
+  console.log(req.body); // userId
+  console.log(req.params); //id (sauce)
 
   /*Sauces.findOne({ _id: req.params.id})
       .then(sauce => {
   
-  switch (req.body.like) {
-case '1':
-      +1
+  if (req.body.like === 1) {
+      if (req.body. ===  ){
 
-break;
-case '-1':
-      -1
+      }
 
-break;
-case '0':
-      
-break;
+  }
+
+  else {
+
+  }
     
    });*/
 
