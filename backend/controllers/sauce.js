@@ -95,21 +95,21 @@ exports.like = (req, res, next) => {
   console.log("Je passe par -likes-");
   console.log(req.body); // userId
   console.log(req.params); //id (sauce)
-
-  /*Sauces.findOne({ _id: req.params.id})
-      .then(sauce => {
   
+  Sauces.findOne({ _id: req.params.id})
+      .then(sauce => {
+  let userliked = sauce.usersLiked.findOne({userId})
+  let userDisliked = sauce.usersDisliked.findOne({userId})
   if (req.body.like === 1) {
-      if (req.body. ===  ){
-
+      if (req.body == userliked ){}
+      else if (req.body == userDisliked ){}
+      else { sauce.update({ like }, {$inc:/*like:1*/})}
       }
-
-  }
 
   else {
 
   }
-    
-   });*/
+  }  
+   );
 
 };
