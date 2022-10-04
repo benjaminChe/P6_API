@@ -98,19 +98,22 @@ exports.like = (req, res, next) => {
   
   Sauces.findOne({ _id: req.params.id})
       .then(sauce => {
-  let usersLikedTrouve = sauce.usersLiked.findOne({userId})
-  let usersDislikedTrouve = sauce.usersDisliked.findOne({userId})
-  if (req.body.like === 1) {
-      if (req.body == usersLikedTrouve ){/* like -1*/ sauce.update({ like }, {$inc:{like:-1}}); /*user remove de userliked*/ let usersLikedIndex = usersLiked.indexOf(req.body); usersLiked.slice(usersLikedIndex, 1)}
-      else if (req.body == usersDislikedTrouve ){/* like +1*/sauce.update({ like }, {$inc:{like:1}});/* dislike -1 */sauce.update({ dislikes }, {$inc:{dislikes:-1}});/* user remove de usersDisliked*/ let usersDislikedIndex = usersDisliked.indexOf(req.body); usersDisliked.slice(usersDislikedIndex, 1);/*ajout user dans userliked*/ usersLiked.push(req.body);}
-      else {/*like +1 */ sauce.update({ like }, {$inc:{like:1}}); /* ajout de l'user dans userliked */ usersLiked.push(req.body)}
+      let userId = req.body;
+      function findUserLikedId(user){return user.usersLiked == userId};
+      function findUserDislikedId(user){return user.usersDisliked == userId};
+      let usersLikedTrouve = sauce.usersLiked.find({findUserLikedId});
+      let usersDislikedTrouve = sauce.usersDisliked.find({findUserDislikedId});
+      if (req.body.like === 1) {
+        if (req.body == usersLikedTrouve ){/* like -1*/ sauce.update({ like }, {$inc:{like:-1}}); /*user remove de userliked*/ let usersLikedIndex = usersLiked.indexOf(req.body); usersLiked.slice(usersLikedIndex, 1)}
+        else if (req.body == usersDislikedTrouve ){/* like +1*/sauce.update({ like }, {$inc:{like:1}});/* dislike -1 */sauce.update({ dislikes }, {$inc:{dislikes:-1}});/* user remove de usersDisliked*/ let usersDislikedIndex = usersDisliked.indexOf(req.body); usersDisliked.slice(usersDislikedIndex, 1);/*ajout user dans userliked*/ usersLiked.push(req.body);}
+        else {/*like +1 */ sauce.update({ like }, {$inc:{like:1}}); /* ajout de l'user dans userliked */ usersLiked.push(req.body)}
       }
 
-  else {
-      if (req.body == usersLikedTrouve ){/* like -1*/ sauce.update({ like }, {$inc:{like:-1}}); /*user remove de userliked*/ let usersLikedIndex = usersLiked.indexOf(req.body); usersLiked.slice(usersLikedIndex, 1);/*dislike +1 */ sauce.update({ dislikes }, {$inc:{dislikes:1}}); /* ajout de l'user dans userDisliked */ usersDisliked.push(req.body)}
-      else if (req.body == usersDislikedTrouve ){/* dislike -1*/ sauce.update({ dislikes }, {$inc:{dislikes:-1}}); /*user remove de userDisliked*/ let usersDislikedIndex = usersDisliked.indexOf(req.body); usersDisliked.slice(usersDislikedIndex, 1)}
-      else {/*dislike +1 */ sauce.update({ dislikes }, {$inc:{dislikes:1}}); /* ajout de l'user dans userDisliked */ usersDisliked.push(req.body)}
-  }
+      else {
+        if (req.body == usersLikedTrouve ){/* like -1*/ sauce.update({ like }, {$inc:{like:-1}}); /*user remove de userliked*/ let usersLikedIndex = usersLiked.indexOf(req.body); usersLiked.slice(usersLikedIndex, 1);/*dislike +1 */ sauce.update({ dislikes }, {$inc:{dislikes:1}}); /* ajout de l'user dans userDisliked */ usersDisliked.push(req.body)}
+        else if (req.body == usersDislikedTrouve ){/* dislike -1*/ sauce.update({ dislikes }, {$inc:{dislikes:-1}}); /*user remove de userDisliked*/ let usersDislikedIndex = usersDisliked.indexOf(req.body); usersDisliked.slice(usersDislikedIndex, 1)}
+        else {/*dislike +1 */ sauce.update({ dislikes }, {$inc:{dislikes:1}}); /* ajout de l'user dans userDisliked */ usersDisliked.push(req.body)}
+      }
   }  
    );
 
