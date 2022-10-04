@@ -5,6 +5,14 @@ const app = express();
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 const path = require('path');
+const express = require("express");
+const helmet = require("helmet");
+
+require('dotenv').config()
+console.log(process.env) // remove this after you've confirmed it is working
+
+
+
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://ipa:ipA12yeah@cluster0.rpw6gkd.mongodb.net/?retryWrites=true&w=majority";
@@ -22,7 +30,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
-
+app.use(helmet());
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
