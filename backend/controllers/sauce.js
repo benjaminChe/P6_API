@@ -107,7 +107,9 @@ exports.like = (req, res, next) => {
       }
 
   else {
-
+      if (req.body == usersLikedTrouve ){/* like -1*/ sauce.update({ like }, {$inc:{like:-1}}); /*user remove de userliked*/ let usersLikedIndex = usersLiked.indexOf(req.body); usersLiked.slice(usersLikedIndex, 1);/*dislike +1 */ sauce.update({ dislikes }, {$inc:{dislikes:1}}); /* ajout de l'user dans userDisliked */ usersDisliked.push(req.body)}
+      else if (req.body == usersDislikedTrouve ){/* dislike -1*/ sauce.update({ dislikes }, {$inc:{dislikes:-1}}); /*user remove de userDisliked*/ let usersDislikedIndex = usersDisliked.indexOf(req.body); usersDisliked.slice(usersDislikedIndex, 1)}
+      else {/*dislike +1 */ sauce.update({ dislikes }, {$inc:{dislikes:1}}); /* ajout de l'user dans userDisliked */ usersDisliked.push(req.body)}
   }
   }  
    );
