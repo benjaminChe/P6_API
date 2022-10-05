@@ -115,19 +115,14 @@ exports.like = (req, res, next) => {
 
     Sauces.findOne({ _id: req.params.id }).then((sauce) => {
         let userId = req.body.userId;
-        function findUserLikedId(user) {
-            return user.usersLiked == userId;
-        }
-        function findUserDislikedId(user) {
-            return user.usersDisliked == userId;
-        }
+
         console.log(sauce);
         console.log(sauce.usersLiked.find((user) => user === userId));
 
         let usersLikedTrouve = sauce.usersLiked.find((user) => user === userId);
-        let usersDislikedTrouve = sauce.usersDisliked.find({
-            findUserDislikedId,
-        });
+        let usersDislikedTrouve = sauce.usersDisliked.find(
+            (user) => user === userId
+        );
         if (req.body.like === 1) {
             if (req.body == usersLikedTrouve) {
                 /* like -1*/ sauce.update({ like }, { $inc: { like: -1 } });

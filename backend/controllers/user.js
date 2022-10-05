@@ -10,27 +10,34 @@ exports.signup = (req, res, next) => {
     const passwordvalidator = new passwordValidator();
     passwordvalidator.is().min(8).is().max(100).has().not().spaces();
     passwordvalidator.validate(req.body.password); // résultat = true ou false
-    // if passwordvalidate
-    bcrypt
-        .hash(req.body.password, 10)
-        .then((hash) => {
-            const user = new User({
-                email: req.body.email,
-                password: hash,
-            });
-            if (emailvalidator.validate(req.body.email)) {
-                user.save()
-                    .then(() =>
-                        res.status(201).json({ message: "Utilisateur créé !" })
-                    )
-                    .catch((error) => res.status(400).json({ error }));
-            } else {
-                // return res.(message email n'est pas au bon format)
-            }
-        })
-        .catch((error) => res.status(500).json({ error }));
-};
+    if (passwordvalidator === true) {
+        bcrypt
+            .hash(req.body.password, 10)
+            .then((hash) => {
+                const user = new User({
+                    email: req.body.email,
+                    password: hash,
+                });
 
+                if (emailvalidator.validate(req.body.email)) {
+                    user.save()
+                        .then(() =>
+                            res
+                                .status(201)
+                                .json({ message: "Utilisateur créé !" })
+                        )
+                        .catch((error) => res.status(400).json({ error }));
+                } else {
+                    res.statusMessage = "L'adresse Email est invalide";
+                    res.status(400).end();
+                }
+            })
+            .catch((error) => res.status(500).json({ error }));
+    } else {
+        res.statusMessage = "Le mot de passe est invalide";
+        res.status(400).end();
+    }
+};
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then((user) => {
