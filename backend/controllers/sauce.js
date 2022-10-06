@@ -108,7 +108,6 @@ exports.getAllsauce = (req, res, next) => {
 };
 
 exports.like = (req, res, next) => {
-    console.log("Je passe par -likes-");
     console.log(req.body.userId); // userId
     console.log(typeof req.body.like); // like type
     console.log(req.params); //id (sauce)
@@ -120,37 +119,40 @@ exports.like = (req, res, next) => {
         console.log(sauce.usersLiked.find((user) => user === userId));
 
         let usersLikedTrouve = sauce.usersLiked.find((user) => user === userId);
-        let usersDislikedTrouve = sauce.usersDisliked.find(
-            (user) => user === userId
-        );
+
         switch (req.body.like) {
             case 1:
-                /*like +1 */ sauce.update({ like }, { $inc: { like: 1 } });
-                /* ajout de l'user dans userliked */ usersLiked.push(userId);
+                /*like +1 */ sauce.updateOne({ sauce }, { $inc: { like: 1 } });
+                /* ajout de l'user dans userliked */ sauce.usersLiked.push(
+                    userId
+                );
                 break;
             case -1:
-                /*dislike +1 */ sauce.update(
-                    { dislikes },
+                /*dislike +1 */ sauce.updateOne(
+                    { sauce },
                     { $inc: { dislikes: 1 } }
                 );
-                /* ajout de l'user dans userDisliked */ usersDisliked.push(
+                /* ajout de l'user dans userDisliked */ sauce.usersDisliked.push(
                     userId
                 );
                 break;
             case 0:
                 if (usersLikedTrouve == userId) {
-                    /* like -1*/ sauce.update({ like }, { $inc: { like: -1 } });
+                    /* like -1*/ sauce.updateOne(
+                        { sauce },
+                        { $inc: { like: -1 } }
+                    );
                     /*user remove de userliked*/ let usersLikedIndex =
-                        usersLiked.indexOf(req.body.userId);
-                    usersLiked.slice(usersLikedIndex, 1);
+                        sauce.usersLiked.indexOf(req.body.userId);
+                    sauce.usersLiked.slice(usersLikedIndex, 1);
                 } else {
-                    /* dislike -1*/ sauce.update(
-                        { dislikes },
+                    /* dislike -1*/ sauce.updateOne(
+                        { sauce },
                         { $inc: { dislikes: -1 } }
                     );
                     /*user remove de userDisliked*/ let usersDislikedIndex =
-                        usersDisliked.indexOf(req.body.userId);
-                    usersDisliked.slice(usersDislikedIndex, 1);
+                        sauce.usersDisliked.indexOf(req.body.userId);
+                    sauce.usersDisliked.slice(usersDislikedIndex, 1);
                 }
                 break;
         }
