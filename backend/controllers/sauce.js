@@ -123,56 +123,36 @@ exports.like = (req, res, next) => {
         let usersDislikedTrouve = sauce.usersDisliked.find(
             (user) => user === userId
         );
-        if (req.body.like === 1) {
-            if (req.body == usersLikedTrouve) {
-                /* like -1*/ sauce.update({ like }, { $inc: { like: -1 } });
-                /*user remove de userliked*/ let usersLikedIndex =
-                    usersLiked.indexOf(req.body);
-                usersLiked.slice(usersLikedIndex, 1);
-            } else if (req.body == usersDislikedTrouve) {
-                /* like +1*/ sauce.update({ like }, { $inc: { like: 1 } });
-                /* dislike -1 */ sauce.update(
-                    { dislikes },
-                    { $inc: { dislikes: -1 } }
-                );
-                /* user remove de usersDisliked*/ let usersDislikedIndex =
-                    usersDisliked.indexOf(req.body);
-                usersDisliked.slice(usersDislikedIndex, 1);
-                /*ajout user dans userliked*/ usersLiked.push(req.body);
-            } else {
+        switch (req.body.like) {
+            case 1:
                 /*like +1 */ sauce.update({ like }, { $inc: { like: 1 } });
-                /* ajout de l'user dans userliked */ usersLiked.push(req.body);
-            }
-        } else {
-            if (req.body == usersLikedTrouve) {
-                /* like -1*/ sauce.update({ like }, { $inc: { like: -1 } });
-                /*user remove de userliked*/ let usersLikedIndex =
-                    usersLiked.indexOf(req.body);
-                usersLiked.slice(usersLikedIndex, 1);
+                /* ajout de l'user dans userliked */ usersLiked.push(userId);
+                break;
+            case -1:
                 /*dislike +1 */ sauce.update(
                     { dislikes },
                     { $inc: { dislikes: 1 } }
                 );
                 /* ajout de l'user dans userDisliked */ usersDisliked.push(
-                    req.body
+                    userId
                 );
-            } else if (req.body == usersDislikedTrouve) {
-                /* dislike -1*/ sauce.update(
-                    { dislikes },
-                    { $inc: { dislikes: -1 } }
-                );
-                /*user remove de userDisliked*/ let usersDislikedIndex =
-                    usersDisliked.indexOf(req.body);
-                usersDisliked.slice(usersDislikedIndex, 1);
-            } else {
-                /*dislike +1 */ sauce.update(
-                    { dislikes },
-                    { $inc: { dislikes: 1 } }
-                );
-                /* ajout de l'user dans userDisliked */ usersDisliked.push(
-                    req.body
-                );
-            }
+                break;
+            case 0:
+                if (usersLikedTrouve == userId) {
+                    /* like -1*/ sauce.update({ like }, { $inc: { like: -1 } });
+                    /*user remove de userliked*/ let usersLikedIndex =
+                        usersLiked.indexOf(req.body.userId);
+                    usersLiked.slice(usersLikedIndex, 1);
+                } else {
+                    /* dislike -1*/ sauce.update(
+                        { dislikes },
+                        { $inc: { dislikes: -1 } }
+                    );
+                    /*user remove de userDisliked*/ let usersDislikedIndex =
+                        usersDisliked.indexOf(req.body.userId);
+                    usersDisliked.slice(usersDislikedIndex, 1);
+                }
+                break;
         }
     });
 };
