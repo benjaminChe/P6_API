@@ -119,13 +119,20 @@ exports.like = (req, res, next) => {
         );
         console.log("sauce : " + sauce);
         console.log("usersLikedTrouve = " + usersLikedTrouve);
+        console.log(req.params.id);
+        console.log(req.params.id);
+        //console.log();
 
         switch (req.body.like) {
             case 1:
-                /*like +1 */ sauce.updateOne({ sauce }, { $inc: { like: 1 } });
-                /* ajout de l'user dans userliked */ sauce.usersLiked.push(
-                    userId
-                );
+                // if
+                Sauces.updateOne(
+                    { _id: req.params.id },
+                    { $inc: { likes: 1 }, $push: { usersLiked: userId } }
+                )
+                    .then(() => res.status(201).json({ message: "ok" }))
+                    .catch((error) => res.status(400).json({ error }));
+
                 console.log("ajout de user dans usersliked");
                 break;
             case -1:
