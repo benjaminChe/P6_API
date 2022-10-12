@@ -123,7 +123,7 @@ exports.like = (req, res, next) => {
                     });
                 } else {
                     Sauces.updateOne(
-                        { _id: req.params.id },
+                        { sauce },
                         { $inc: { likes: 1 }, $push: { usersLiked: userId } }
                     )
                         .then(() => res.status(201).json({ message: "ok" }))
