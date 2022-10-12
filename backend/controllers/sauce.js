@@ -117,40 +117,51 @@ exports.like = (req, res, next) => {
         let usersLikedTrouve = sauce.usersLiked.find(
             (users) => users === userId
         );
+        let usersDislikedTrouve = sauce.usersDisliked.find(
+            (users) => users === userId
+        );
         console.log("sauce : " + sauce);
-        console.log("usersLikedTrouve = " + usersLikedTrouve);
-        console.log(req.params.id);
-        console.log(req.params.id);
-        //console.log();
 
         switch (req.body.like) {
             case 1:
-                // if
-                Sauces.updateOne(
-                    { _id: req.params.id },
-                    { $inc: { likes: 1 }, $push: { usersLiked: userId } }
-                )
-                    .then(() => res.status(201).json({ message: "ok" }))
-                    .catch((error) => res.status(400).json({ error }));
-
-                console.log("ajout de user dans usersliked");
+                if (sauce.usersLiked.includes(userId) === true) {
+                    res.status(400).json({
+                        message: "l'utilisateur a deja like",
+                    });
+                } else {
+                    Sauces.updateOne(
+                        { _id: req.params.id },
+                        { $inc: { likes: 1 }, $push: { usersLiked: userId } }
+                    )
+                        .then(() => res.status(201).json({ message: "ok" }))
+                        .catch((error) => res.status(400).json({ error }));
+                }
                 break;
             case -1:
-                /*dislike +1 */ sauce.updateOne(
-                    { sauce },
-                    { $inc: { dislikes: 1 } }
-                );
-                /* ajout de l'user dans userDisliked */ sauce.usersDisliked.push(
-                    userId
-                );
-                console.log("ajout de user dans usersDisliked");
+                if (sauce.usersDisliked.includes(userId) === true) {
+                    res.status(400).json({
+                        message: "l'utilisateur a deja dislike",
+                    });
+                } else {
+                    Sauces.updateOne(
+                        { sauce },
+                        {
+                            $inc: { dislikes: 1 },
+                            $push: { usersDisliked: userId },
+                        }
+                    )
+                        .then(() => res.status(201).json({ message: "ok" }))
+                        .catch((error) => res.status(400).json({ error }));
+                }
                 break;
             case 0:
                 if (usersLikedTrouve == userId) {
-                    /* like -1*/ sauce.updateOne(
+                    /* like -1*/ Sauces.updateOne(
                         { sauce },
                         { $inc: { like: -1 } }
-                    );
+                    )
+                        .then(() => res.status(201).json({ message: "ok" }))
+                        .catch((error) => res.status(400).json({ error }));
                     /*user remove de userliked*/ let usersLikedIndex =
                         sauce.usersLiked.indexOf(usersLikedTrouve);
                     console.log(
@@ -160,11 +171,13 @@ exports.like = (req, res, next) => {
                     sauce.usersLiked.splice(usersLikedIndex, 1);
                     console.log("user remove de usersLiked");
                     console.log("usersLiked = " + sauce.usersLiked);
-                } else {
-                    /* dislike -1*/ sauce.updateOne(
+                } else if (usersDislikedTrouve == userId) {
+                    /* dislike -1*/ Sauces.updateOne(
                         { sauce },
                         { $inc: { dislikes: -1 } }
-                    );
+                    )
+                        .then(() => res.status(201).json({ message: "ok" }))
+                        .catch((error) => res.status(400).json({ error }));
                     /*user remove de userDisliked*/ let usersDislikedIndex =
                         sauce.usersDisliked.indexOf(userId);
                     console.log(
@@ -173,6 +186,10 @@ exports.like = (req, res, next) => {
                     sauce.usersDisliked.splice(usersDislikedIndex, 1);
                     console.log("user remove de userDisliked ");
                     console.log("userDisliked = " + sauce.usersDisliked);
+                } else {
+                    res.status(400).json({
+                        error: error,
+                    });
                 }
                 break;
         }
