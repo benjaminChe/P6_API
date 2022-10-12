@@ -109,18 +109,11 @@ exports.getAllsauce = (req, res, next) => {
 
 exports.like = (req, res, next) => {
     console.log("userId = " + req.body.userId); // userId
-    console.log("typeof like = " + typeof req.body.like); // like type
-    console.log("id sauce (req.params) = " + req.params); //id (sauce)
 
     Sauces.findOne({ _id: req.params.id }).then((sauce) => {
         let userId = req.body.userId;
-        let usersLikedTrouve = sauce.usersLiked.find(
-            (users) => users === userId
-        );
-        let usersDislikedTrouve = sauce.usersDisliked.find(
-            (users) => users === userId
-        );
-        console.log("sauce : " + sauce);
+
+        console.log(req.body.like);
 
         switch (req.body.like) {
             case 1:
@@ -155,40 +148,33 @@ exports.like = (req, res, next) => {
                 }
                 break;
             case 0:
-                if (usersLikedTrouve == userId) {
-                    /* like -1*/ Sauces.updateOne(
+                if (sauce.usersLiked.includes(userId) === true) {
+                    Sauces.updateOne(
                         { sauce },
-                        { $inc: { like: -1 } }
+                        {
+                            $inc: { like: -1 },
+                            $pull: { usersLiked: userId },
+                        }
                     )
                         .then(() => res.status(201).json({ message: "ok" }))
                         .catch((error) => res.status(400).json({ error }));
-                    /*user remove de userliked*/ let usersLikedIndex =
-                        sauce.usersLiked.indexOf(usersLikedTrouve);
-                    console.log(
-                        "index of = " +
-                            sauce.usersLiked.indexOf(usersLikedTrouve)
-                    );
-                    sauce.usersLiked.splice(usersLikedIndex, 1);
-                    console.log("user remove de usersLiked");
-                    console.log("usersLiked = " + sauce.usersLiked);
-                } else if (usersDislikedTrouve == userId) {
-                    /* dislike -1*/ Sauces.updateOne(
+
+                    console.log("case 0 : like");
+                } else if (sauce.usersDisliked.includes(userId) === true) {
+                    Sauces.updateOne(
                         { sauce },
-                        { $inc: { dislikes: -1 } }
+                        {
+                            $inc: { dislikes: -1 },
+                            $pull: { usersLiked: userId },
+                        }
                     )
                         .then(() => res.status(201).json({ message: "ok" }))
                         .catch((error) => res.status(400).json({ error }));
-                    /*user remove de userDisliked*/ let usersDislikedIndex =
-                        sauce.usersDisliked.indexOf(userId);
-                    console.log(
-                        "index of = " + sauce.usersDisliked.indexOf(userId)
-                    );
-                    sauce.usersDisliked.splice(usersDislikedIndex, 1);
-                    console.log("user remove de userDisliked ");
-                    console.log("userDisliked = " + sauce.usersDisliked);
+
+                    console.log("case 0 : dislike ");
                 } else {
                     res.status(400).json({
-                        error: error,
+                        message: "erreur case 0",
                     });
                 }
                 break;
