@@ -121,7 +121,7 @@ exports.like = (req, res, next) => {
                         });
                     } else {
                         Sauces.updateOne(
-                            { sauce },
+                            { _id: req.params.id },
                             {
                                 $inc: { likes: 1 },
                                 $push: { usersLiked: userId },
@@ -138,7 +138,7 @@ exports.like = (req, res, next) => {
                         });
                     } else {
                         Sauces.updateOne(
-                            { sauce },
+                            { _id: req.params.id },
                             {
                                 $inc: { dislikes: 1 },
                                 $push: { usersDisliked: userId },
@@ -152,7 +152,7 @@ exports.like = (req, res, next) => {
                     if (sauce.usersLiked.includes(userId) === true) {
                         console.log("case 0 : like");
                         Sauces.updateOne(
-                            { sauce },
+                            { _id: req.params.id },
                             {
                                 $inc: { likes: -1 },
                                 $pull: { usersLiked: { $in: [userId] } },
@@ -163,7 +163,7 @@ exports.like = (req, res, next) => {
                     } else if (sauce.usersDisliked.includes(userId) === true) {
                         console.log("case 0 : dislike ");
                         Sauces.updateOne(
-                            { sauce },
+                            { _id: req.params.id },
                             {
                                 $inc: { dislikes: -1 },
                                 $pull: { usersDisliked: { $in: [userId] } },

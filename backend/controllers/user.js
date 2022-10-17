@@ -5,12 +5,20 @@ const emailvalidator = require("email-validator");
 const passwordValidator = require("password-validator");
 
 exports.signup = (req, res, next) => {
-    // ici -> password validator
-
+    console.log("password = " + req.body.password);
     const passwordvalidator = new passwordValidator();
-    passwordvalidator.is().min(8).is().max(100).has().not().spaces();
-    passwordvalidator.validate(req.body.password); // résultat = true ou false
-    if (passwordvalidator === true) {
+    passwordvalidator
+        .is()
+        .min(6)
+        .is()
+        .max(100)
+        .has()
+        .not()
+        .spaces()
+        .has()
+        .digits(2);
+    let pValidate = passwordvalidator.validate(req.body.password);
+    if (pValidate === true) {
         bcrypt
             .hash(req.body.password, 10)
             .then((hash) => {
@@ -34,6 +42,11 @@ exports.signup = (req, res, next) => {
             })
             .catch((error) => res.status(500).json({ error }));
     } else {
+        console.log(
+            passwordvalidator.validate(req.body.password, {
+                details: true,
+            })
+        );
         res.statusMessage = "Le mot de passe est invalide";
         res.status(400).end();
     }
@@ -58,7 +71,7 @@ exports.login = (req, res, next) => {
                         userId: user._id,
                         token: jwt.sign(
                             { userId: user._id },
-                            "RANDOM_TOKEN_SECRET",
+                            process.env.SECRET_KEY,
                             { expiresIn: "24h" }
                         ),
                     });
