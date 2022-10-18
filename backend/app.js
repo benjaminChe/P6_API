@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const sauce = require("./models/modelsSauces");
 const app = express();
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
@@ -10,16 +9,20 @@ const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 require("dotenv").config();
-console.log("process.env = " + process.env); // remove this after you've confirmed it is working
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri =
-    "mongodb+srv://ipa:ipA12yeah@cluster0.rpw6gkd.mongodb.net/?retryWrites=true&w=majority";
+    "mongodb+srv://" +
+    process.env.LOGIN +
+    ":" +
+    process.env.PASSWORD +
+    "@" +
+    process.env.CLUSTER;
 
 mongoose
     .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Connexion à MongoDB réussie !"))
-    .catch(() => console.log("Connexion à MongoDB échouée !"));
+    .catch(() => console.log("Connexion à MongoDB échouée ! " + uri));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
